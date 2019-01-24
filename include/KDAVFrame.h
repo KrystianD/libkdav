@@ -23,6 +23,8 @@ namespace kdav
 			av_frame_free(&pFrame);
 		}
 
+		std::vector<int> getLineSizes() const { return std::vector<int>(pFrame->linesize, pFrame->linesize + AV_NUM_DATA_POINTERS); }
+
 		int getWidth() const { return pFrame->width; }
 		int getHeight() const { return pFrame->height; }
 
