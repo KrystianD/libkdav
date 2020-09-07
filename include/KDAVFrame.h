@@ -9,32 +9,32 @@ extern "C" {
 
 namespace kdav
 {
-	class KDAVFrame
+class KDAVFrame
+{
+	AVFrame* pFrame;
+
+public:
+	KDAVFrame()
 	{
-		AVFrame* pFrame;
+		pFrame = av_frame_alloc();
+	}
+	~KDAVFrame()
+	{
+		av_frame_free(&pFrame);
+	}
 
-	public:
-		KDAVFrame()
-		{
-			pFrame = av_frame_alloc();
-		}
-		~KDAVFrame()
-		{
-			av_frame_free(&pFrame);
-		}
+	std::vector<int> getLineSizes() const { return std::vector<int>(pFrame->linesize, pFrame->linesize + AV_NUM_DATA_POINTERS); }
 
-		std::vector<int> getLineSizes() const { return std::vector<int>(pFrame->linesize, pFrame->linesize + AV_NUM_DATA_POINTERS); }
+	int getWidth() const { return pFrame->width; }
+	int getHeight() const { return pFrame->height; }
 
-		int getWidth() const { return pFrame->width; }
-		int getHeight() const { return pFrame->height; }
+	uint8_t** getData() const { return pFrame->data; }
 
-		uint8_t** getData() const { return pFrame->data; }
+	AVFrame* getPtr() const { return pFrame; }
 
-		AVFrame* getPtr() const { return pFrame; }
-
-	private:
-		KDAVFrame(const KDAVFrame&) = delete;
-	};
+private:
+	KDAVFrame(const KDAVFrame&) = delete;
+};
 }
 
 #endif

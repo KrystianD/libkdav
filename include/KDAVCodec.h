@@ -11,41 +11,41 @@ extern "C" {
 
 namespace kdav
 {
-	class KDAVCodec
+class KDAVCodec
+{
+	AVCodec* pCodec;
+
+public:
+	KDAVCodec(AVCodec* pCodec) : pCodec(pCodec) {}
+	~KDAVCodec()
 	{
-		AVCodec* pCodec;
 
-	public:
-		KDAVCodec(AVCodec* pCodec) : pCodec(pCodec) {}
-		~KDAVCodec()
-		{
+	}
 
+	static KDAVCodec* createH264Codec()
+	{
+		AVCodec* pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
+		if (pCodec == NULL) {
+			fprintf(stderr, "Unsupported codec!\n");
+			return 0;
 		}
-
-		static KDAVCodec* createH264Codec()
-		{
-			AVCodec* pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
-			if (pCodec == NULL) {
-				fprintf(stderr, "Unsupported codec!\n");
-				return 0;
-			}
-			return new KDAVCodec(pCodec);
+		return new KDAVCodec(pCodec);
+	}
+	static KDAVCodec* findCodecByName(const std::string& name)
+	{
+		AVCodec* pCodec = avcodec_find_decoder_by_name(name.c_str());
+		if (pCodec == NULL) {
+			fprintf(stderr, "Unsupported codec!\n");
+			return 0;
 		}
-		static KDAVCodec* findCodecByName(const std::string& name)
-		{
-			AVCodec* pCodec = avcodec_find_decoder_by_name(name.c_str());
-			if (pCodec == NULL) {
-				fprintf(stderr, "Unsupported codec!\n");
-				return 0;
-			}
-			return new KDAVCodec(pCodec);
-		}
+		return new KDAVCodec(pCodec);
+	}
 
-		AVCodec* getPtr() const { return pCodec; }
+	AVCodec* getPtr() const { return pCodec; }
 
-	private:
-		KDAVCodec(const KDAVCodec&) = delete;
-	};
+private:
+	KDAVCodec(const KDAVCodec&) = delete;
+};
 }
 
 #endif
