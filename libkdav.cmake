@@ -1,7 +1,11 @@
-get_filename_component(LIBKDAV_CUR_DIR ${CMAKE_CURRENT_LIST_FILE} PATH) # for cmake before 2.8.3
-
-include_directories("${LIBKDAV_CUR_DIR}/include/")
-
-set(COMMON_SOURCES ${COMMON_SOURCES}
-  "${LIBKDAV_CUR_DIR}/src/KDAVCodec.cpp"
+add_library(kdav STATIC
+  "${CMAKE_CURRENT_LIST_DIR}/src/KDAV.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/src/KDAVCodec.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/src/KDAVParser.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/src/KDAVFrame.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/src/KDAVCodecContext.cpp"
 )
+
+target_include_directories(kdav PUBLIC "${CMAKE_CURRENT_LIST_DIR}/include/")
+
+target_link_libraries(kdav PUBLIC -lavformat -lswscale -lavcodec -lavutil)

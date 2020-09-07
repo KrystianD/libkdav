@@ -1,49 +1,29 @@
-#ifndef __KDAVPARSER_H__
-#define __KDAVPARSER_H__
+#pragma once
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-}
+#include <memory>
+#include <functional>
 
-#include <KDAVCodecContext.h>
+class AVCodecParserContext;
 
 namespace kdav
 {
-	class KDAVParser
-	{
-		AVCodecParserContext* pParser;
+typedef std::unique_ptr<AVCodecParserContext, std::function<void(AVCodecParserContext*)>> AVCodecParserContextPtr;
 
-	public:
-		KDAVParser(AVCodecParserContext* pParser) : pParser(pParser) {}
-		~KDAVParser()
-		{
-			av_parser_close(pParser);
-		}
+class KDAVCodecContext;
 
-		int parse(KDAVCodecContext* codecCtx, void* inData, int inPos, int inLength, uint8_t*& frameData, int& frameLength)
-		{
-			// uint8_t*& _frameData = (uint8_t*&)frameData;
-			uint8_t* _inData = (uint8_t*)inData + inPos;
-			return av_parser_parse2(pParser, codecCtx->getPtr(), &frameData, &frameLength, _inData, inLength, 0, 0, AV_NOPTS_VALUE);
-		}
+class KDAVParserFrame;
 
-		AVCodecParserContext* getPtr() const { return pParser; }
+class KDAVParser
+{
+	AVCodecParserContextPtr pParser;
 
-		static KDAVParser* createH264Parser()
-		{
-			AVCodecParserContext* pParser = av_parser_init(AV_CODEC_ID_H264);
-			if (pParser == NULL) {
-				fprintf(stderr, "Unsupported codec!\n");
-				return 0;
-			}
-			return new KDAVParser(pParser);
-		}
+public:
+	explicit KDAVParser(AVCodecParserContextPtr& pParser) : pParser(std::move(pParser)) {}
 
-	private:
-		KDAVParser(const KDAVParser&) = delete;
-	};
+	void parse(std::shared_ptr<KDAVCodecContext>& codecCtx, void* inData, int inPos, int inLength, KDAVParserFrame& frame, int& consumedBytes);
+
+	AVCodecParserContext* getPtr() const { return pParser.get(); }
+
+	static std::shared_ptr<KDAVParser> createH264Parser();
+};
 }
-
-#endif

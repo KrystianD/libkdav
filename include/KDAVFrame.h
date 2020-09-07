@@ -1,40 +1,29 @@
-#ifndef __KDAVFRAME_H__
-#define __KDAVFRAME_H__
+#pragma once
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-}
+#include <vector>
+#include <memory>
+#include <functional>
+
+class AVFrame;
 
 namespace kdav
 {
+typedef std::unique_ptr<AVFrame, std::function<void(AVFrame*)>> AVFramePtr;
+
 class KDAVFrame
 {
-	AVFrame* pFrame;
+	AVFramePtr pFrame;
 
 public:
-	KDAVFrame()
-	{
-		pFrame = av_frame_alloc();
-	}
-	~KDAVFrame()
-	{
-		av_frame_free(&pFrame);
-	}
+	explicit KDAVFrame();
 
-	std::vector<int> getLineSizes() const { return std::vector<int>(pFrame->linesize, pFrame->linesize + AV_NUM_DATA_POINTERS); }
+	std::vector<int> getLineSizes() const;
 
-	int getWidth() const { return pFrame->width; }
-	int getHeight() const { return pFrame->height; }
+	int getWidth() const;
+	int getHeight() const;
 
-	uint8_t** getData() const { return pFrame->data; }
+	uint8_t* const* getData() const;
 
-	AVFrame* getPtr() const { return pFrame; }
-
-private:
-	KDAVFrame(const KDAVFrame&) = delete;
+	AVFrame* getPtr() const { return pFrame.get(); }
 };
 }
-
-#endif
