@@ -14,7 +14,7 @@ class KDAVCodec;
 
 class KDAVFrame;
 
-typedef std::unique_ptr<AVCodecContext, std::function<void(AVCodecContext*)>> AVCodecContextPtr;
+typedef std::unique_ptr<AVCodecContext, void(*)(AVCodecContext*)> AVCodecContextPtr;
 
 class KDAVCodecContext
 {

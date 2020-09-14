@@ -8,7 +8,7 @@ class AVFrame;
 
 namespace kdav
 {
-typedef std::unique_ptr<AVFrame, std::function<void(AVFrame*)>> AVFramePtr;
+typedef std::unique_ptr<AVFrame, void(*)(AVFrame*)> AVFramePtr;
 
 class KDAVFrame
 {

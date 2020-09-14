@@ -7,7 +7,7 @@ class AVCodecParserContext;
 
 namespace kdav
 {
-typedef std::unique_ptr<AVCodecParserContext, std::function<void(AVCodecParserContext*)>> AVCodecParserContextPtr;
+typedef std::unique_ptr<AVCodecParserContext, void(*)(AVCodecParserContext*)> AVCodecParserContextPtr;
 
 class KDAVCodecContext;
 
