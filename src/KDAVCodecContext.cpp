@@ -1,5 +1,7 @@
 #include "KDAVCodecContext.h"
 
+#include <stdexcept>
+
 extern "C" {
 #include <libavcodec/avcodec.h>
 }
